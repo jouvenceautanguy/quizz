@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <%- include('partials/head') %>
+    
+</head>
+<body>
+    <%- include('partials/header') %>
+    <h1>Page Index de test</h1>
+
+
+    <% if (locals.date2) { %>
+        <h1> Form</h1>
+        <form action="/date" method="POST">
+     <p>
+         <input type="number" name="content" placeholder="nombre de j">
+     </p>
+     <p>
+         <button type="submit">valider</button>
+     </p>
+     
+        </form>
+        <p> la date du jour est :  <%= locals.date2 %></p> 
+   <% }  %> 
+
+   <% if (locals.dateAuj) { %>
+    <p> la date du jour est :  <%= locals.dateAuj %></p> 
+    <p>dans <%= locals.leParam %> jours, la date sera : <%= locals.date1 %> </p>
+
+<% }  %>
+  
+ 
+   
+    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Ut maxime officiis similique numquam iusto voluptatem ullam molestias sit, error dolor neque repudiandae necessitatibus excepturi facilis ipsum reprehenderit debitis saepe vel.</p>
+</body>
+</html>

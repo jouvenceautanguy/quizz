@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>jeux / vendredi 27</title>
+    <%- include ('partials/head') %>
+</head>
+
+<body>
+    <%- include ('partials/header') %>
+
+        <h1>Jeux</h1>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Titre</th>
+                    <th>Plateforme</th>
+                    <th>pseudo</th>
+                    <th>Created at</th>
+                    <th>Updated at</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% posts.forEach( (p) => { %>
+
+               
+                 <tr>
+                <td><%= p.id %></td>
+                <td><%= p.name %></td>
+                <td><%= p.platform %> </td>
+                <td><%= p.username %> </td>
+                <td> <%= p.created.fromNow() %></td>
+                <td> <%= p.modified.fromNow() %></td>
+                </tr>
+           <% }) %>
+            </tbody>
+        </table>
+
+        <form method="post" action="/addgame">
+            <p>
+                <input type="text" name="name" placeholder="nom du jeu">
+            </p>
+            <p>plateforme :
+                <ul>
+                    <li>
+                        <input type="checkbox" name="platforms" value="pc" id="pc">
+                        <label for="pc">PC</label>
+                    </li>
+                    <li>
+                        <input type="checkbox" name="platforms" value="ps5" id="ps5">
+                        <label for="ps5">ps5</label>
+                    </li>
+                    <li>
+                        <input type="checkbox" name="platforms" value="switch" id="switch">
+                        <label for="switch">switch</label>
+                    </li>
+                    <li>
+                        <input type="checkbox" name="platforms" value="pc" id="xbox">
+                        <label for="xbox">XBOX</label>
+                    </li>
+                </ul>
+<p>
+    <button type="submit">Valider</button>
+</p>
+            </p>
+        </form>
+</body>
+
+</html>

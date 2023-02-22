@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>form / vendredi 27</title>
+</head>
+<body>
+    <%- include('partials/header') %>
+  
+   <h1> Form</h1>
+   <form action="/form" method="POST">
+<p>
+    <input type="text" name="content" placeholder="le contenu">
+</p>
+<p>
+    <button type="submit">valider</button>
+</p>
+
+   </form>
+   <% if (locals.t) { %>
+<p>Vous avez dit : <%= locals.t %></p>
+  <% }%>
+</body>
+</html>
