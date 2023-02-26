@@ -1,127 +1,116 @@
-let express = require("express");
-//let db = require('./config/database');
-let session = require("express-session");
-let Game = require("./models/Game");
-// lance le serv
-let app = express();
+const express = require("express");
+const session = require("express-session");
 
+const Questionss = require("./models/question");
+const Users = require("./models/user");
+const Answer = require("./models/answer");
+const Result = require("./models/result");
+
+const app = express();
 app.set("view engine", "ejs");
 
-// permet de 'décoder' les données de requêtes
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
-// rend le dossier styles public
+
 app.use("/assets", express.static("public"));
-// pour la session
+
 app.set("trust proxy", 1);
 app.use(
   session({
-    secret: "12345ihn45874kkkk6m", //clé unique
+    secret: "12345ihn45874kkkk6m",
     resave: false,
     saveUninitialized: true,
-    cookie: { secure: false, expires: new Date("2023-12-31") }, // false si http , true si https
+    cookie: { secure: false, expires: new Date("2023-12-31") },
   })
 );
 
-///// middleware /////
 app.use(require("./middlewares/user"));
 app.use(require("./middlewares/flash"));
-//routes
+app.use(require("./middlewares/avancement"));
+
 app.get("/", (req, res) => {
-  console.log(req.session);
-  res.render("pages/index", {
-    date1: "ceci est le data de test",
-    elements: false,
-  });
+  res.render("pages/index", { t: req.body.contento });
 });
 
-app.get("/date", (req, res) => {
-  res.render("pages/index", {
-    date2: `${new Date().toLocaleDateString()}`,
-  });
+app.post("/", (req, res) => {
+  if (req.body.contento === undefined || req.body.contento === "") {
+
+  } else {
+    req.session.username = req.body.contento;
+  }
+  res.redirect("/questions");
 });
 
-app.get("/date/:x", (req, res) => {
-  let date = new Date();
-  date.setDate(date.getDate() + req.params.x);
-  let dateString = date.toLocaleDateString();
-
-  res.render("pages/index", {
-    dateAuj: `${new Date().toLocaleDateString()}`,
-    leParam: req.params.x,
-    date1: dateString,
-  });
+app.get("/questions", (req, res) => {
+  res.render("pages/questions", { l: req.body.categorie });
 });
 
-app.get("/form", (req, res) => {
-  console.log(req.session);
-  res.render("pages/form");
-});
-
-app.post("/form", (req, res) => {
-  console.log(req.body);
-  res.render("pages/form", { t: req.body.content });
-});
-
-app.post("/date", (req, res) => {
-  let x = req.body.content;
-  res.redirect("/date/" + x);
-});
-
-app.get("/games", (req, res) => {
-  console.log(req.session);
-  //     // recherche les données
-  // db.query('SELECT * FROM videogames ORDER BY name',
-  //  (err, result) => {
-  //     console.log(result)
-  // res.render('pages/listing', {posts : result})
-  // })
-  Game.all((retour) => {
-    res.render("pages/listing", { posts: retour });
-  });
-
-  //     //affiche une vue avec les données en param
-});
-app.post("/addgame", (req, res) => {
-  if (req.body.name === undefined || req.body.name === "") {
-    console.log("name vide");
-    req.flash("error", "nom de jeu invalide");
-    res.redirect("/games");
+app.post("/questions", (req, res) => {
+  req.session.score = 0;
+  if (req.body.categorie === undefined || req.body.categorie === "") {
+    req.flash("error", "veuillez choisir une catégorie");
+    res.redirect("/questions");
   } else {
     let p = null;
-    if (req.body.platforms !== undefined) {
-      if (Array.isArray(req.body.platforms)) {
-        p = req.body.platforms.join(",");
+    if (req.body.categorie !== undefined) {
+      if (Array.isArray(req.body.categorie)) {
+        req.flash("error", "veuillez choisir une seule catégorie !");
+        res.redirect("/questions");
       } else {
-        p = req.body.platforms;
+        p = req.body.categorie;
       }
     }
-
-    Game.create(req.body.name, p, req.session.username, () => {
-      console.log("ok");
-      res.redirect("/games");
+    let rep;
+    let temp = [];
+    Questionss.create(p, (result) => {
+      req.session.tabloblo = result.map((question) => question._id);
+      req.session.nombredeQ = req.session.tabloblo.length;
+      req.session.questions = result.map((question) => question._content);
+      res.redirect("/next");
     });
   }
 });
 
-app.get("/randomusername", (req, res) => {
-  req.flash("succès", "félicitations vous avez un nouveau nom");
-  req.session.username = "u-" + Math.floor(Math.random() * 100000);
-  res.redirect("/");
-});
-
-app.get("/inscription", (req, res) => {
-  res.render("pages/inscription");
-});
-
-app.post("/inscription", (req, res) => {
-  if (req.body.contento === undefined || req.body.contento === "") {
-    //
+app.get("/next", (req, res) => {
+  if (req.session.tabloblo.length > 0) {
+    let koko = req.session.tabloblo[0];
+    let kekestion = req.session.questions[0].split(",")[0];
+    Answer.create(koko, (resultt) => {
+      let questions = req.session.questions;
+      res.render("pages/quizz", {
+        questions: kekestion,
+        answers: resultt,
+        score: req.session.score,
+      });
+    });
   } else {
-    req.session.username = req.body.contento;
+    const score = req.session.score;
+    const userId = req.session.username;
+    Result.create(userId, score, (err, result) => {
+      if (err) {
+      }
+      res.render("pages/quizzEnd", {
+        score: req.session.score,
+        total: req.session.nombredeQ,
+      });
+    });
   }
+});
+
+app.post("/next", (req, res) => {
+  const selectedAnswer = req.body.answers;
+  if (selectedAnswer === "1") {
+    req.session.score += 1;
+  }
+  req.session.tabloblo.shift();
+  req.session.questions.shift();
+  res.redirect("/next");
+});
+
+app.get("/rejouer", (req, res) => {
   res.redirect("/");
 });
+
 
 app.get("/*", (req, res) => {
   res.send("ceci est une route non déclarée");

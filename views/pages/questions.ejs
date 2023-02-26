@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <%- include ('partials/head') %>
+</head>
+
+<body>
+    <%- include ('partials/header') %>
+
+        <h1>Choisissez votre catégorie</h1>
+
+        <p>Catégories :
+        <form action="/questions" method="POST">
+            <ul>
+                <li>
+                    <input type="radio" name="categorie" value="Géographie" id="geographie">
+                    <label for="geographie">Géographie</label>
+                </li>
+                <li>
+                    <input type="radio" name="categorie" value="Bande Dessinée" id="bande_des">
+                    <label for="bande_des">Bande Dessinnée</label>
+                </li>
+                <li>
+                    <input type="radio" name="categorie" value="wtf" id="wtf">
+                    <label for="wtf">WTF</label>
+                </li>
+
+            </ul>
+
+
+            <p>
+                <button type="submit">Valider</button>
+            </p>
+            </p>
+        </form>
+</body>
+
+</html>

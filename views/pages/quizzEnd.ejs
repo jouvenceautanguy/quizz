@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Quizz terminé</title>
+    <%- include('partials/head') %>
+</head>
+
+<body>
+    <%- include('partials/header') %>
+        <h1>Quizz terminé</h1>
+        <p>Vous avez obtenu <%= score %> points sur <%= total %> possibles.</p>
+        <h2>Scoreboard</h2>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>pseudo</th>
+                    <th>Score</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td></td>
+                    <td></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <form action="/rejouer" method="GET">
+            <button type="submit">Rejouer</button>
+        </form>
+</body>
+
+</html>

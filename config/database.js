@@ -4,7 +4,8 @@ let db = mysql.createConnection({
   host: 'localhost',
   user: 'root',
   password:'',
-  database: 'node3'  
+  database: 'quizz' 
+  
 })
 
 db.connect()
